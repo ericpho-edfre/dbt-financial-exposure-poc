@@ -17,6 +17,10 @@ clean-targets:
   - "target"
   - "dbt_packages"
 
+# DBT cloud specific configuration
+dbt-cloud:
+    project-id: 70471823475360
+
 # Model configuration
 models:
   financial_exposure_poc:
