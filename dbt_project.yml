@@ -19,7 +19,7 @@ clean-targets:
 
 # DBT cloud specific configuration
 dbt-cloud:
-    project-id: 70471823475360
+    project-id: 70471823484533
 
 # Model configuration
 models:
