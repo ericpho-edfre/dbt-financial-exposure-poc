@@ -2,10 +2,9 @@
 
 {{
   config(
-    target_schema='snapshots',
     unique_key='project_id',
     strategy='check',
-    check_cols='all'  -- or list the columns explicitly
+    check_cols='all'
   )
 }}
 

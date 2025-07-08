@@ -21,45 +21,6 @@ clean-targets:
 dbt-cloud:
     project-id: 70471823484533
 
-# Model configuration
-models:
-  financial_exposure_poc:
-    # Staging models - ephemeral or views for transforming raw data
-    staging:
-      +materialized: view
-      +docs:
-        node_color: "#E8F4FD"
-    
-    # Intermediate models - views for business logic steps
-    intermediate:
-      +materialized: view
-      +docs:
-        node_color: "#FFF2CC"
-    
-    # Marts models - tables for final business-ready data
-    marts:
-      +materialized: table
-      +docs:
-        node_color: "#D5E8D4"
-      
-      # Finance-specific models
-      finance:
-        +tags: ["finance"]
-        +meta:
-          owner: "finance-team"
-      
-      # Risk-specific models
-      risk:
-        +tags: ["risk", "exposure"]
-        +meta:
-          owner: "risk-team"
-      
-      # Reporting models
-      reporting:
-        +tags: ["reporting"]
-        +meta:
-          owner: "analytics-team"
-
 # Snapshot configuration
 snapshots:
   financial_exposure_poc:
@@ -81,12 +42,3 @@ tests:
 # Documentation
 docs-paths: ["docs"]
 
-# Variables that can be used across the project
-vars:
-  # Set default date ranges
-  start_date: '2023-01-01'
-  end_date: '2024-12-31'
-  
-  # Environment-specific variables
-  risk_threshold: 0.05
-  exposure_limit: 1000000
