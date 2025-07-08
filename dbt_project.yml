@@ -63,9 +63,7 @@ models:
 # Snapshot configuration
 snapshots:
   financial_exposure_poc:
-    +target_schema: snapshots
-    +strategy: timestamp
-    +updated_at: updated_at
+    +target_schema: snapshots_raw
 
 # Seed configuration
 seeds:
