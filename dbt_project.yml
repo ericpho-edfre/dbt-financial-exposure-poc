@@ -71,7 +71,7 @@ snapshots:
 seeds:
   financial_exposure_poc:
     raw:
-      :+schema: raw
+      +schema: raw
       +quote_columns: true
 
 # Test configuration
