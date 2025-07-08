@@ -70,7 +70,9 @@ snapshots:
 # Seed configuration
 seeds:
   financial_exposure_poc:
-    +quote_columns: false
+    raw:
+      :+schema: raw
+      +quote_columns: true
 
 # Test configuration
 tests:
