@@ -33,6 +33,13 @@ seeds:
       +schema: raw
       +quote_columns: true
 
+# Models configuration
+models:
+  financial_exposure_poc:
+    02_staging:
+      +schema: stg
+      +materialized: view
+
 # Test configuration
 tests:
   financial_exposure_poc:
