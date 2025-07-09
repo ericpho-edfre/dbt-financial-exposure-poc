@@ -45,6 +45,6 @@ select PROJECT_ID,
         POICAPACITYMWAC,
         COD_DATE,
         EARLIEST_COD_DATE
-from {{ source('raw', 'project_tracker') }}
+from {{ source('raw', 'project_tracker_raw') }}
 
 {% endsnapshot %}

@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw
-    schema: dbt_epho_raw            # This must match the actual Snowflake schema
+    schema: INFORMATICA_RAW # schema: dbt_epho_raw            # This must match the actual Snowflake schema
     tables:
-      - name: project_tracker
+      - name: project_tracker_raw
         description: "Seeded project tracker data from CSV"
