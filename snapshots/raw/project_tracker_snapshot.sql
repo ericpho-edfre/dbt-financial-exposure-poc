@@ -32,7 +32,19 @@
       -- 'FID' - Not found
 #}
 
-select *
+select PROJECT_ID,
+        PROJECT_NAME,
+        LATITUDE,
+        LONGITUDE,
+        IS_PROJECT_EDF_OWNED,
+        DEVELOPMENT_REGION,
+        CURRENT_PROJECT_STATUS,
+        TECHNOLOGY_CATEGORY,
+        CONTRACTEDCAPACITYMWDC,
+        CONTRACTEDCAPACITYMWAC,
+        POICAPACITYMWAC,
+        COD_DATE,
+        EARLIEST_COD_DATE
 from {{ source('raw', 'project_tracker') }}
 
 {% endsnapshot %}
