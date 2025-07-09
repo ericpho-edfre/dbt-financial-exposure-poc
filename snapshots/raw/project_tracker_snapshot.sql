@@ -47,7 +47,7 @@ SELECT
     COD_DATE,
     EARLIEST_COD_DATE,
     LOAD_DATETIME
-    FROM {{ source('raw', 'project_tracker_raw') }}
+    FROM {{ ref('bronze_project_tracker') }}
 
 
 {% endsnapshot %}

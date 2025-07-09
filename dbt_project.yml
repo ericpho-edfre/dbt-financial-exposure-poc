@@ -36,6 +36,9 @@ seeds:
 # Models configuration
 models:
   financial_exposure_poc:
+    01_bronze:
+      +schema: bronze
+      +materialized: view
     02_staging:
       +schema: stg
       +materialized: view
