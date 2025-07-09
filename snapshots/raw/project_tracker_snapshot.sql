@@ -32,7 +32,9 @@
       -- 'FID' - Not found
 #}
 
-select PROJECT_ID,
+WITH base_data AS (
+    SELECT
+        PROJECT_ID,
         PROJECT_NAME,
         LATITUDE,
         LONGITUDE,
@@ -43,8 +45,21 @@ select PROJECT_ID,
         CONTRACTEDCAPACITYMWDC,
         CONTRACTEDCAPACITYMWAC,
         POICAPACITYMWAC,
-        COD_DATE,
-        EARLIEST_COD_DATE
-from {{ source('raw', 'project_tracker_raw') }}
+        CASE
+            WHEN UPPER(COD_DATE) = 'NULL' THEN NULL
+            ELSE TRY_CAST(COD_DATE AS DATE)
+        END AS COD_DATE,
+        CASE
+            WHEN UPPER(EARLIEST_COD_DATE) = 'NULL' THEN NULL
+            ELSE TRY_CAST(EARLIEST_COD_DATE AS DATE)
+        END AS EARLIEST_COD_DATE,
+        LOAD_DATETIME,
+        ROW_NUMBER() OVER (PARTITION BY PROJECT_ID ORDER BY LOAD_DATETIME DESC) AS row_num
+    FROM {{ source('raw', 'project_tracker_raw') }}
+)
+
+SELECT *
+FROM base_data
+WHERE row_num = 1
 
 {% endsnapshot %}
