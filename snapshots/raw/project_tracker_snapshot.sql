@@ -46,7 +46,8 @@ SELECT
     POICAPACITYMWAC,
     COD_DATE,
     EARLIEST_COD_DATE,
-    LOAD_DATETIME
+    LOAD_DATETIME,
+    'test' as new_column
     FROM {{ ref('bronze_project_tracker') }}
 
 
