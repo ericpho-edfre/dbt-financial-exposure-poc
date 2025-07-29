@@ -33,24 +33,14 @@ seeds:
       +schema: raw
       +quote_columns: true
 
-# Setting environment variables
-vars:
-  env_database_map:
-    default: "DEV_EDFR_NA_STG"
-    QUAL: "DEV_EDFR_NA_DWH"
-    PROD: "DEV_EDFR_NA_DMT"
-
 
 # Models configuration
 models:
   financial_exposure_poc:
-    00_source:
+    01_bronze:
       +materialized: view
-      +schema: bronze
-
-    01_staging:
-      +materialized: view
-      +schema: bronze
+      +schema: bronze      
+      
 
     02_silver:
       raw_vault:
