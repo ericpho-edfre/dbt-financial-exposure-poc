@@ -1,7 +1,18 @@
--- models/02_staging/stg_project_tracker.sql
+-- models/01_bronze/bronze_project_tracker.sql
+{{ config(
+    materialized='view',
+    database=get_database() 
+) }}
 
-WITH base_data AS (
-    SELECT
+
+with raw_data as (
+SELECT *
+FROM {{ source('raw', 'project_tracker_raw') }}
+WHERE LOAD_DATE IS NOT NULL
+),
+
+clean_data as (
+        SELECT
         PROJECT_ID,
         NULLIF(PROJECT_NAME,'NULL') as PROJECT_NAME,
         LATITUDE,
@@ -21,11 +32,12 @@ WITH base_data AS (
             WHEN UPPER(EARLIEST_COD_DATE) = 'NULL' THEN NULL
             ELSE TRY_CAST(EARLIEST_COD_DATE AS DATE)
         END AS EARLIEST_COD_DATE,
-        LOAD_DATETIME,
-        ROW_NUMBER() OVER (PARTITION BY PROJECT_ID ORDER BY LOAD_DATETIME DESC NULLS LAST) AS row_num
-    FROM {{ ref('project_tracker_snapshot') }}
-)
+        LOAD_DATE,
+        ROW_NUMBER() OVER (PARTITION BY PROJECT_ID ORDER BY LOAD_DATE DESC NULLS LAST) AS row_num
+    FROM raw_data
+),
 
+dedup_data as (
 SELECT 
     PROJECT_ID,
     PROJECT_NAME,
@@ -40,6 +52,9 @@ SELECT
     POICAPACITYMWAC,
     COD_DATE,
     EARLIEST_COD_DATE,
-    LOAD_DATETIME
-FROM base_data
+    LOAD_DATE
+FROM clean_data
 WHERE row_num = 1
+)
+
+select * from dedup_data
