@@ -1,3 +1,3 @@
 {% macro get_database() %}
-  {{ return(var('env_database_map')[target.name]) }}
+  {{ return(env_var('DBT_DATABASE')) }}
 {% endmacro %}
