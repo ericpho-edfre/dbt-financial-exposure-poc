@@ -1,0 +1,53 @@
+version: 2
+
+models:
+  - name: bronze_project_tracker
+    description: >
+      Deduplicated and cleaned view of project tracker data from the raw layer. 
+      Filters out null load dates, converts "NULL" strings to actual nulls, 
+      performs type coercion, and retains the most recent row per project.
+    columns:
+      - name: PROJECT_ID
+        description: Unique identifier for the project.
+        tests:
+          - not_null
+          - unique
+
+      - name: PROJECT_NAME
+        description: Name of the project.
+
+      - name: LATITUDE
+        description: Latitude coordinate of the project location.
+
+      - name: LONGITUDE
+        description: Longitude coordinate of the project location.
+
+      - name: IS_PROJECT_EDF_OWNED
+        description: Indicates whether the project is owned by EDF (true/false).
+
+      - name: DEVELOPMENT_REGION
+        description: Geographic region where the project is being developed.
+
+      - name: CURRENT_PROJECT_STATUS
+        description: Current status of the project (e.g., active, completed, planned).
+
+      - name: TECHNOLOGY_CATEGORY
+        description: Technology type used in the project (e.g., solar, wind).
+
+      - name: CONTRACTEDCAPACITYMWDC
+        description: Contracted capacity in megawatts (direct current).
+
+      - name: CONTRACTEDCAPACITYMWAC
+        description: Contracted capacity in megawatts (alternating current).
+
+      - name: POICAPACITYMWAC
+        description: Point-of-interconnection capacity in megawatts (alternating current).
+
+      - name: COD_DATE
+        description: Commercial Operation Date of the project.
+
+      - name: EARLIEST_COD_DATE
+        description: Earliest expected Commercial Operation Date.
+
+      - name: LOAD_DATE
+        description: Date when the record was loaded into the raw layer.

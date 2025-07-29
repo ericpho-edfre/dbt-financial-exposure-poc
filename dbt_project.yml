@@ -36,7 +36,7 @@ seeds:
 # Setting environment variables
 vars:
   env_database_map:
-    DEV: "DEV_EDFR_NA_STG"
+    default: "DEV_EDFR_NA_STG"
     QUAL: "DEV_EDFR_NA_DWH"
     PROD: "DEV_EDFR_NA_DMT"
 
@@ -46,27 +46,22 @@ models:
   financial_exposure_poc:
     00_source:
       +materialized: view
-      +database: "{{ var('env_database_map')[target.name] }}"
       +schema: bronze
 
     01_staging:
       +materialized: view
-      +database: "{{ var('env_database_map')[target.name] }}"
       +schema: bronze
 
     02_silver:
       raw_vault:
         +materialized: incremental
-        +database: "{{ var('env_database_map')[target.name] }}"
         +schema: silver_raw_vault
       business_vault:
         +materialized: view
-        +database: "{{ var('env_database_map')[target.name] }}"
         +schema: silver_business_vault
 
     03_gold:
       +materialized: table
-      +database: "{{ var('env_database_map')[target.name] }}"
       +schema: gold
 
 # Test configuration
