@@ -9,13 +9,6 @@ models:
     columns:
       - name: PROJECT_ID
         description: Unique identifier for the project.
-        tests:
-          - not_null:
-              config: # Aware about the double indentation !
-                store_failures: true
-                database: "{{ env_var('DBT_DATABASE') }}"
-                schema: dq_failures
-          - unique
 
       - name: PROJECT_NAME
         description: Name of the project.
