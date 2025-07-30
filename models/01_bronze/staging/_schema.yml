@@ -3,7 +3,7 @@ version: 2
 models:
   - name: stg_project_tracker
     description: >
-      Deduplicated and cleaned view of project tracker data from the RAW layer. 
+      Deduplicated and cleaned view of project tracker data from the raw data. 
       Filters out null load dates, converts "NULL" strings to actual nulls, 
       performs type coercion, and retains the most recent row per project.
     columns:
