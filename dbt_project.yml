@@ -55,10 +55,6 @@ models:
       +schema: gold
 
 # Test configuration
-tests:
-  financial_exposure_poc:
-    +store_failures: true
-    +schema: test_failures
 
 # Documentation
 docs-paths: ["docs"]
