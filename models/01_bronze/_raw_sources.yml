@@ -2,7 +2,16 @@ version: 2
 
 sources:
   - name: raw
-    schema: INFORMATICA_RAW # schema: dbt_epho_raw            # This must match the actual Snowflake schema
+    schema: INFORMATICA_RAW # schema: This must match the actual Snowflake schema
+    config:
+      freshness:
+        warn_after:
+          count: 24
+          period: hour
+        error_after:
+          count: 168
+          period: hour
+      loaded_at_field: LOAD_DATE
     tables:
       - name: project_tracker_raw
         description: "Seeded project tracker data from Informatica"
