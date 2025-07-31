@@ -1,0 +1,35 @@
+version: 2
+
+models:
+  - name: hub_project_tracker_project
+    description: >
+      Hub table for projects coming from Project Tracker, built following Data Vault 2.0 raw vault standards.
+      It captures the unique business key `project_id` and its associated hash key `hub_hk`, 
+      along with metadata such as load timestamp and record source.
+    config:
+      materialized: incremental
+      unique_key: hub_hk
+    columns:
+      - name: hub_hk
+        description: >
+          Surrogate hash key generated from the business key(s) using `generate_surrogate_key(['project_id'])`.
+          Serves as the primary unique identifier for the hub.
+        tests:
+          - not_null
+          - unique
+
+      - name: project_id
+        description: >
+          Natural business key representing the project ID from the source system (Project Tracker).
+        tests:
+          - not_null
+
+      - name: load_date
+        description: >
+          Timestamp indicating when the record was loaded into the raw vault.
+          Typically set using `current_timestamp` during model execution.
+
+      - name: record_source
+        description: >
+          Indicates the source system from which the record originated.
+          Hardcoded as 'Project tracker' in this model.
