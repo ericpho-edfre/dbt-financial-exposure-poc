@@ -98,3 +98,8 @@ models:
         description: Foreign key to the third-party Project Tracker system (USR03).
       - name: LOAD_DATE
         description: Load timestamp from the raw layer. Used to identify the most recent record.
+    tests:
+      - stg_sap_wbs_completeness:
+          warn_if: "<10"
+          error_if: "=0"
+          store_failures: false

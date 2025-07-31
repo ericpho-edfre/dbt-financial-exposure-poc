@@ -62,3 +62,37 @@ models:
         description: >
           Metadata field indicating the source system or process that loaded this record.
           Expected to be "SAP PROJ" for this model.
+
+  - name: hub_sap_wbs
+    description: >
+      Hub model capturing unique WBS (Work Breakdown Structure) elements from the SAP PRPS source.
+      Built using the `generate_hub` macro and sourced from the `stg_sap_wbs` staging table
+      and built following Data Vault 2.0 raw vault standards.This hub represents the core business 
+      concept of WBS within the SAP project system.
+    columns:
+      - name: hub_hk
+        description: >
+          Surrogate hash key uniquely identifying a WBS hub record. Generated from the business keys.
+        tests:
+          - not_null
+          - unique
+
+      - name: sap_client_id
+        description: >
+          Identifier for the SAP client. Part of the composite business key for WBS.
+
+      - name: wbs_id
+        description: >
+          Unique ID for the WBS element in SAP. Represents the breakdown unit in the project hierarchy.
+
+      - name: sap_proj_id
+        description: >
+          SAP internal project identifier to which the WBS element belongs. Part of the composite key.
+
+      - name: load_date
+        description: >
+          Timestamp indicating when the record was loaded into the data platform.
+
+      - name: record_source
+        description: >
+          Identifier of the source system or process. For this model, expected to be 'SAP PRPS'.
