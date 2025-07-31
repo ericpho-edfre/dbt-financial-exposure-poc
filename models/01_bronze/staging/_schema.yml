@@ -48,3 +48,24 @@ models:
 
       - name: LOAD_DATE
         description: Date when the record was loaded into the raw layer.
+  - name: stg_sap_project
+    description: >
+      Bronze layer view of SAP project data with basic cleansing and deduplication.
+      Columns renaming performed based on https://leanx.eu/en/sap/table/proj.html
+      Deduplication performed based on LOAD_DATE      
+    columns:
+      - name: client_id
+        description: "SAP client identifier (renamed from MANDT)"
+        data_type: varchar      
+      - name: project_definition_internal
+        description: "Internal project definition number (WBS element)"
+        data_type: varchar        
+      - name: project_definition
+        description: "External project definition identifier"
+        data_type: varchar
+      - name: project_short_definition_line1
+        description: "Short description of the project (first line)"
+        data_type: varchar
+      - name: LOAD_DATE
+        description: "Timestamp when record was loaded into raw layer"
+        data_type: timestamp
