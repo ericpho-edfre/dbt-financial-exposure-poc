@@ -2,6 +2,7 @@ version: 2
 
 sources:
   - name: raw
+    description: Contains all unprocessed RAW source data as Snowflake landing zone
     schema: INFORMATICA_RAW # schema: This must match the actual Snowflake schema
     config:
       freshness:
@@ -14,4 +15,24 @@ sources:
       loaded_at_field: LOAD_DATE
     tables:
       - name: project_tracker_raw
-        description: "Seeded project tracker data from Informatica"
+        description: "Extracted project tracker data from Informatica"
+      - name: SAP_PROJ_RAW
+        description: "Extracted SAP project data from Informatica"
+        columns:
+          - name: MANDT
+            description: "SAP client identifier"
+            data_type: varchar
+          - name: PSPNR
+            description: "Project definition internal number (WBS element)"
+            data_type: varchar
+          - name: PSPID
+            description: "Project definition external identifier"
+            data_type: varchar
+          - name: POST1
+            description: "Project short description line 1"
+            data_type: varchar
+          - name: LOAD_DATE
+            description: "Timestamp when record was loaded into raw layer"
+            data_type: timestamp
+      - name: SAP_PRPS_RAW
+        description: "Extracted SAP PRPS (WBS) data from Informatica"
