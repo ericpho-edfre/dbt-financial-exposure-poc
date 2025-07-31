@@ -23,10 +23,10 @@ sources:
             description: "SAP client identifier"
             data_type: varchar
           - name: PSPNR
-            description: "Project definition internal number (WBS element)"
+            description: "Project definition (internal)"
             data_type: varchar
           - name: PSPID
-            description: "Project definition external identifier"
+            description: "Project Definition"
             data_type: varchar
           - name: POST1
             description: "Project short description line 1"

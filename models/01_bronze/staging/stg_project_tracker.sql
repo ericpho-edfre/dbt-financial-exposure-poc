@@ -1,9 +1,15 @@
--- models/01_bronze/bronze_project_tracker.sql
+-- models/01_bronze/stg_project_tracker.sql
 {{ config(
     materialized='view',
     database=get_database() 
 ) }}
 
+
+-- Bronze layer for Project Tracker data
+-- This model processes raw project tracker data, cleans it, and removes duplicates based on the latest load date.
+-- It ensures that only the most recent record for each project is retained.
+-- The model handles NULL values and converts date fields appropriately.
+-- Source: raw.project_tracker_raw
 
 with raw_data as (
 SELECT *

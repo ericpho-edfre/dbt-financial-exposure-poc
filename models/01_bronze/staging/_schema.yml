@@ -3,9 +3,12 @@ version: 2
 models:
   - name: stg_project_tracker
     description: >
-      Deduplicated and cleaned view of project tracker data from the raw data. 
-      Filters out null load dates, converts "NULL" strings to actual nulls, 
-      performs type coercion, and retains the most recent row per project.
+      -- Bronze layer for Project Tracker data
+      -- This model processes raw project tracker data, cleans it, and removes duplicates based on the latest load date.
+      -- It ensures that only the most recent record for each project is retained.
+      -- The model handles NULL values and converts date fields appropriately.
+      -- Source: raw.project_tracker_raw
+
     columns:
       - name: PROJECT_ID
         description: Unique identifier for the project.
@@ -31,13 +34,13 @@ models:
       - name: TECHNOLOGY_CATEGORY
         description: Technology type used in the project (e.g., solar, wind).
 
-      - name: CONTRACTEDCAPACITYMWDC
+      - name: CONTRACTED_CAPACITY_MW_DC
         description: Contracted capacity in megawatts (direct current).
 
-      - name: CONTRACTEDCAPACITYMWAC
+      - name: CONTRACTED_CAPACITY_MW_AC
         description: Contracted capacity in megawatts (alternating current).
 
-      - name: POICAPACITYMWAC
+      - name: POI_CAPACITY_MW_AC
         description: Point-of-interconnection capacity in megawatts (alternating current).
 
       - name: COD_DATE
@@ -48,13 +51,16 @@ models:
 
       - name: LOAD_DATE
         description: Date when the record was loaded into the raw layer.
+        
   - name: stg_sap_project
     description: >
-      Bronze layer view of SAP project data with basic cleansing and deduplication.
-      Columns renaming performed based on https://leanx.eu/en/sap/table/proj.html
-      Deduplication performed based on LOAD_DATE      
+      -- Bronze layer for SAP Project data
+      -- This model processes raw SAP project data, cleans it, and removes duplicates based on the latest load date.
+      -- It ensures that only the most recent record for each project is retained.
+      -- Source: raw.sap_project_raw      
+      -- Columns renaming performed based on https://leanx.eu/en/sap/table/proj.html      
     columns:
-      - name: client_id
+      - name: sap_client_id
         description: "SAP client identifier (renamed from MANDT)"
         data_type: varchar      
       - name: project_definition_internal
