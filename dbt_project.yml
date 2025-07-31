@@ -56,7 +56,7 @@ models:
 
 # Test configuration
 tests:
-  +schema: 'test_audit'
+  +schema: 'test_failures'
   
 # Documentation
 docs-paths: ["docs"]
