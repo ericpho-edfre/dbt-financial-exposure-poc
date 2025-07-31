@@ -3,10 +3,6 @@
     {% set dev_user = env_var('DBT_DEV_USER', '') | lower %}
     {% set schema_override = target.schema %}
 
-    {{ log("🔍 DBT_ENV_NAME        = " ~ env, info=True) }}
-    {{ log("🔍 DBT_DEV_USER        = " ~ dev_user, info=True) }}
-    {{ log("🔍 target.schema       = " ~ schema_override, info=True) }}
-
     {% if schema_override.startswith('dbt_cloud_pr_') %}
         {{ log("✅ Using PR schema from target.schema: " ~ schema_override, info=True) }}
         {{ schema_override }}
