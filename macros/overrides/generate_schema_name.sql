@@ -3,6 +3,8 @@
     {% set env = env_var('DBT_ENV_NAME', 'dev') | lower %}
     {% set dev_user = env_var('DBT_DEV_USER', '') | lower %}
 
+    {{ log("🛠 Using schema branch: PR=" ~ (dbt_pr_schema != 'none') ~ ", ENV=" ~ env ~ ", DEV_USER=" ~ dev_user, info=True) }}
+
     {% if dbt_pr_schema != 'none' %}
         {{ dbt_pr_schema }}
 
