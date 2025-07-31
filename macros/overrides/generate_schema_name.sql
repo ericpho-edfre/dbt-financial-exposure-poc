@@ -1,10 +1,10 @@
 {% macro generate_schema_name(custom_schema_name, node) %}
-    {% set is_pr = env_var('DBT_CLOUD_PR_ID', 'none') != 'none' %}
+    {% set dbt_pr_schema = env_var('DBT_CLOUD_PR_SCHEMA', 'none') %}
     {% set env = env_var('DBT_ENV_NAME', 'dev') | lower %}
     {% set dev_user = env_var('DBT_DEV_USER', '') | lower %}
 
-    {% if is_pr %}
-        {{ custom_schema_name }}  {# Let dbt Cloud set the dynamic schema like dbt_cloud_pr_xxx #}
+    {% if dbt_pr_schema != 'none' %}
+        {{ dbt_pr_schema }}
 
     {% elif env == 'dev' %}
         {% if dev_user in ['', 'default'] %}
