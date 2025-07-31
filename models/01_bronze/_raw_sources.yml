@@ -17,7 +17,9 @@ sources:
       - name: project_tracker_raw
         description: "Extracted project tracker data from Informatica"
       - name: SAP_PROJ_RAW
-        description: "Extracted SAP project data from Informatica"
+        description: >
+          Extracted SAP project data from Informatica.
+          SAP data dictionary : https://leanx.eu/en/sap/table/proj.html
         columns:
           - name: MANDT
             description: "SAP client identifier"
@@ -35,4 +37,26 @@ sources:
             description: "Timestamp when record was loaded into raw layer"
             data_type: timestamp
       - name: SAP_PRPS_RAW
-        description: "Extracted SAP PRPS (WBS) data from Informatica"
+        description: >
+          Extracted SAP PRPS (WBS) data from Informatica.
+          SAP data dictionary : https://leanx.eu/en/sap/table/prps.html
+        columns:
+          - name: MANDT
+            description: "SAP client identifier"            
+          - name: PSPNR
+            description: "WBS Element"            
+          - name: POSID
+            description: "Work Breakdown Structure Element (WBS Element)"
+          - name: POST1
+            description: "Project short description line 1"            
+          - name: PSPHI
+            description: "Current number of the appropriate project"            
+          - name: POSKI
+            description: "WBS element short identification"
+          - name: USR03
+            description: "4th user-defined field 10 digits -WBS element"
+          - name: STUFE
+            description: "Level in Project Hierarchy"
+          - name: LOAD_DATE
+            description: "Timestamp when record was loaded into raw layer"
+            data_type: timestamp

@@ -3,11 +3,11 @@ version: 2
 models:
   - name: stg_project_tracker
     description: >
-      -- Bronze layer for Project Tracker data
-      -- This model processes raw project tracker data, cleans it, and removes duplicates based on the latest load date.
-      -- It ensures that only the most recent record for each project is retained.
-      -- The model handles NULL values and converts date fields appropriately.
-      -- Source: raw.project_tracker_raw
+      Bronze layer for Project Tracker data.
+      This model processes raw project tracker data, cleans it, and removes duplicates based on the latest load date.
+      It ensures that only the most recent record for each project is retained.
+      The model handles NULL values and converts date fields appropriately.
+      Source: raw.project_tracker_raw
 
     columns:
       - name: PROJECT_ID
@@ -54,17 +54,17 @@ models:
         
   - name: stg_sap_project
     description: >
-      -- Bronze layer for SAP Project data
-      -- This model processes raw SAP project data, cleans it, and removes duplicates based on the latest load date.
-      -- It ensures that only the most recent record for each project is retained.
-      -- Source: raw.sap_project_raw      
-      -- Columns renaming performed based on https://leanx.eu/en/sap/table/proj.html      
+      Bronze layer for SAP Project data.
+      This model processes raw SAP project data, cleans it, and removes duplicates based on the latest load date.
+      It ensures that only the most recent record for each project is retained.
+      Source: raw.SAP_PROJ_RAW      
+      Columns renaming performed based on https://leanx.eu/en/sap/table/proj.html      
     columns:
       - name: sap_client_id
         description: "SAP client identifier (renamed from MANDT)"
         data_type: varchar      
       - name: project_definition_internal
-        description: "Internal project definition number (WBS element)"
+        description: "Internal project definition number"
         data_type: varchar        
       - name: project_definition
         description: "External project definition identifier"
@@ -75,3 +75,26 @@ models:
       - name: LOAD_DATE
         description: "Timestamp when record was loaded into raw layer"
         data_type: timestamp
+  - name: stg_sap_wbs
+    description: >    
+      Bronze layer for SAP WBS data. This model processes raw SAP PRPS (WBS) records, 
+      cleans the data, and removes duplicates based on the latest LOAD_DATE. It ensures 
+      that only the most recent record for each WBS is retained. 
+      Columns renaming performed based on hhttps://leanx.eu/en/sap/table/prps.html
+    columns:
+      - name: sap_client_id
+        description: SAP client ID (MANDT).
+      - name: wbs_id
+        description: Work Breakdown Structure (WBS) element internal ID (PSPNR).
+      - name: wbs_other_id
+        description: External or alternate WBS element ID (POSID).
+      - name: project_short_definition_line1
+        description: Project short description (line 1) (POST1).
+      - name: sap_proj_id
+        description: SAP project definition ID (PSPHI).
+      - name: wbs_element_short_identification
+        description: Short identification key for the WBS element (POSKI).
+      - name: project_tracker_project_id
+        description: Foreign key to the third-party Project Tracker system (USR03).
+      - name: LOAD_DATE
+        description: Load timestamp from the raw layer. Used to identify the most recent record.

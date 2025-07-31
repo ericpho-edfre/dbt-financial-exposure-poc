@@ -7,7 +7,7 @@
 -- Bronze layer for SAP Project data
 -- This model processes raw SAP project data, cleans it, and removes duplicates based on the latest load date.
 -- It ensures that only the most recent record for each project is retained.
--- Source: raw.sap_project_raw
+-- Source: raw.SAP_PROJ_RAW
 
 with raw_data as (
 SELECT *
