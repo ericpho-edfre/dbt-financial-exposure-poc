@@ -1,15 +1,15 @@
 {% macro generate_schema_name(custom_schema_name, node) %}
-    {% set dbt_pr_schema = env_var('DBT_CLOUD_PR_SCHEMA', 'none') %}
     {% set env = env_var('DBT_ENV_NAME', 'dev') | lower %}
     {% set dev_user = env_var('DBT_DEV_USER', '') | lower %}
+    {% set schema_override = target.schema %}
 
     {{ log("🔍 DBT_ENV_NAME        = " ~ env, info=True) }}
-    {{ log("🔍 DBT_DEV_USER       = " ~ dev_user, info=True) }}
-    {{ log("🔍 DBT_CLOUD_PR_SCHEMA = " ~ dbt_pr_schema, info=True) }}
+    {{ log("🔍 DBT_DEV_USER        = " ~ dev_user, info=True) }}
+    {{ log("🔍 target.schema       = " ~ schema_override, info=True) }}
 
-    {% if dbt_pr_schema != 'none' %}
-        {{ log("✅ Using PR schema: " ~ dbt_pr_schema, info=True) }}
-        {{ dbt_pr_schema }}
+    {% if schema_override.startswith('dbt_cloud_pr_') %}
+        {{ log("✅ Using PR schema from target.schema: " ~ schema_override, info=True) }}
+        {{ schema_override }}
 
     {% elif env == 'dev' %}
         {% if dev_user in ['', 'default'] %}
