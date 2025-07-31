@@ -10,7 +10,7 @@
 ) %}
 
 {#
-  source_model:     staging model with business keys
+  source_model:     staging model with business keys 
   left_key:         e.g., 'customer_id'
   right_key:        e.g., 'order_id'
   left_hub:         e.g., 'hub_customer'
