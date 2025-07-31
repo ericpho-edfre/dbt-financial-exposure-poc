@@ -55,7 +55,9 @@ models:
       +schema: gold
 
 # Test configuration
-
+tests:
+  +schema: 'test_audit'
+  
 # Documentation
 docs-paths: ["docs"]
 
