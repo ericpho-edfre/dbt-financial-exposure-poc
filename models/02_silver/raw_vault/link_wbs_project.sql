@@ -1,0 +1,123 @@
+{{ config(
+    materialized = 'incremental',
+    database=get_database(),    
+    incremental_strategy = 'append'
+) }}
+
+-- This model creates a link table for SAP WBS, SAP Project, and Project Tracker data
+-- It generates surrogate keys for each of the source tables and captures the load date and record source
+-- The model handles NULL values by replacing them with 'UNKNOWN' for string fields
+-- We allow UNKNOWN association as we want to keep track of association date when they happen after the fact
+-- IMPORTANT : this also tracks any links that are removed from source, assuming upstream data ingestion
+-- is performed in a full extract fashion.
+-- Source: stg_sap_wbs, stg_sap_project, stg_project_tracker
+
+with stg_data as 
+(
+    select 
+        ifnull(cast(t1.sap_client_id as varchar), 'UNKNOWN') as t1_sap_client_id,
+        ifnull(cast(t1.wbs_id as varchar), 'UNKNOWN') as t1_wbs_id,
+        ifnull(cast(t1.sap_proj_id as varchar), 'UNKNOWN') as t1_sap_proj_id,
+        ifnull(cast(t1.project_tracker_project_id as varchar), 'UNKNOWN') as t1_project_tracker_project_id,
+        ifnull(cast(t2.sap_project_id as varchar), 'UNKNOWN') as t2_sap_project_id,
+        ifnull(cast(t3.PROJECT_ID as varchar), 'UNKNOWN') as t3_project_id
+    from {{ ref("stg_sap_wbs") }} t1 
+    left join {{ ref("stg_sap_project") }} t2 on t1.sap_client_id = t2.sap_client_id and t1.sap_proj_id = t2.sap_project_id
+    left join {{ ref("stg_project_tracker") }} t3 on t1.project_tracker_project_id = t3.PROJECT_ID
+), 
+
+hub_keys as (
+    select 
+        {{ dbt_utils.generate_surrogate_key(['t1_sap_client_id','t1_wbs_id','t1_sap_proj_id']) }} as sap_client_hub_hk,
+        {{ dbt_utils.generate_surrogate_key(['t2_sap_project_id']) }} as sap_project_hub_hk,
+        {{ dbt_utils.generate_surrogate_key(['t3_project_id']) }} as project_tracker_hub_hk,
+    from stg_data
+),
+
+-- Get the latest state for each link_hk from existing table (incremental mode only)
+latest_existing_state as (
+    {% if is_incremental() %}
+    select 
+        link_hk,
+        is_active,
+        row_number() over (partition by link_hk order by load_date desc) as rn
+    from {{ this }}
+    {% else %}
+    select null as link_hk, null as is_active, null as rn
+    where false
+    {% endif %}
+),
+
+latest_existing_filtered as (
+    select link_hk, is_active
+    from latest_existing_state
+    where rn = 1
+),
+
+current_links as (
+    select 
+        {{ dbt_utils.generate_surrogate_key([
+            'sap_client_hub_hk',
+            'sap_project_hub_hk',
+            'project_tracker_hub_hk'
+        ]) }} as link_hk,
+        sap_client_hub_hk,
+        sap_project_hub_hk,
+        project_tracker_hub_hk,        
+        current_timestamp as load_date,
+        'SAP_PRPS_RAW' as record_source,
+        TRUE as is_active
+    from hub_keys
+    {% if is_incremental() %}
+    -- Only include links that are either new OR have changed state
+    where not exists (
+        select 1 
+        from latest_existing_filtered lef
+        where lef.link_hk = {{ dbt_utils.generate_surrogate_key([
+            'sap_client_hub_hk',
+            'sap_project_hub_hk',
+            'project_tracker_hub_hk'
+        ]) }}
+        and lef.is_active = TRUE  -- Link was already active, so this would be redundant
+    )
+    {% endif %}
+),
+
+-- Only needed in incremental mode: detect links that were previously active but are now missing
+expired_links as (
+    {% if is_incremental() %}
+    select 
+        lef.link_hk,
+        l.sap_client_hub_hk,
+        l.sap_project_hub_hk,
+        l.project_tracker_hub_hk,
+        current_timestamp as load_date,
+        'SAP_PRPS_RAW' as record_source,
+        false as is_active
+    from latest_existing_filtered lef
+    inner join {{ this }} l on lef.link_hk = l.link_hk
+    where lef.is_active = TRUE
+      and not exists (
+          select 1
+          from current_links c
+          where c.link_hk = lef.link_hk
+      )
+      and not exists (
+          select 1
+          from hub_keys hk
+          where {{ dbt_utils.generate_surrogate_key([
+              'hk.sap_client_hub_hk',
+              'hk.sap_project_hub_hk', 
+              'hk.project_tracker_hub_hk'
+          ]) }} = lef.link_hk
+      )
+    {% else %}
+    select null as link_hk, null as sap_client_hub_hk, null as sap_project_hub_hk,
+           null as project_tracker_hub_hk, null as load_date, null as record_source, null as is_active
+    where false
+    {% endif %}
+)
+
+select * from current_links
+union all
+select * from expired_links

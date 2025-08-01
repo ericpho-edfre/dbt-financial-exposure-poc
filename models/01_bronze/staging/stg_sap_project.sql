@@ -18,7 +18,7 @@ WHERE LOAD_DATE IS NOT NULL
 clean_data as (
         SELECT
         MANDT as sap_client_id,
-        PSPNR as project_definition_internal,
+        PSPNR as sap_project_id,
         PSPID as project_definition,
         POST1 as project_short_definition_line1,
         LOAD_DATE,
@@ -28,7 +28,7 @@ clean_data as (
 
 SELECT
     sap_client_id,
-    project_definition_internal,
+    sap_project_id,
     project_definition,
     project_short_definition_line1,
     LOAD_DATE

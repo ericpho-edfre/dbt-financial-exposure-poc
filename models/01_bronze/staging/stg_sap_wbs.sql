@@ -6,7 +6,8 @@
 
 -- Bronze layer for SAP WBS data
 -- This model processes raw SAP WBS data, cleans it, and removes duplicates based on the latest load date.
--- It ensures that only the most recent record for each WBS is retained.
+-- It ensures that only the most recent record for each WBS is retained. R
+-- Renaming based on https://leanx.eu/en/sap/table/prps.html
 -- Source: raw.SAP_PRPS_RAW
 
 
@@ -22,7 +23,7 @@ ranked as (
         MANDT as sap_client_id,
         PSPNR as wbs_id,
         POSID as wbs_other_id,
-        POST1 as project_short_definition_line1,
+        POST1 as wbs_short_definition_line1,
         PSPHI as sap_proj_id,
         POSKI as wbs_element_short_identification,
         USR03 as project_tracker_project_id,
@@ -35,7 +36,7 @@ SELECT
     sap_client_id,
     wbs_id,
     wbs_other_id,
-    project_short_definition_line1,
+    wbs_short_definition_line1,
     sap_proj_id,
     wbs_element_short_identification,
     project_tracker_project_id,
