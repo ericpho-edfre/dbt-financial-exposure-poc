@@ -103,4 +103,3 @@ models:
           warn_if: "<10"
           error_if: "=0"
           store_failures: false
-
