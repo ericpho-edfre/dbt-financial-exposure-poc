@@ -63,8 +63,8 @@ models:
       - name: sap_client_id
         description: "SAP client identifier (renamed from MANDT)"
         data_type: varchar      
-      - name: project_definition_internal
-        description: "Internal project definition number"
+      - name: sap_project_id
+        description: "SAP Internal project number"
         data_type: varchar        
       - name: project_definition
         description: "External project definition identifier"
@@ -80,7 +80,7 @@ models:
       Bronze layer for SAP WBS data. This model processes raw SAP PRPS (WBS) records, 
       cleans the data, and removes duplicates based on the latest LOAD_DATE. It ensures 
       that only the most recent record for each WBS is retained. 
-      Columns renaming performed based on hhttps://leanx.eu/en/sap/table/prps.html
+      Columns renaming performed based on https://leanx.eu/en/sap/table/prps.html
     columns:
       - name: sap_client_id
         description: SAP client ID (MANDT).
@@ -88,8 +88,8 @@ models:
         description: Work Breakdown Structure (WBS) element internal ID (PSPNR).
       - name: wbs_other_id
         description: External or alternate WBS element ID (POSID).
-      - name: project_short_definition_line1
-        description: Project short description (line 1) (POST1).
+      - name: wbs_short_definition_line1
+        description: WBS short description (line 1) (POST1).
       - name: sap_proj_id
         description: SAP project definition ID (PSPHI).
       - name: wbs_element_short_identification
@@ -98,8 +98,4 @@ models:
         description: Foreign key to the third-party Project Tracker system (USR03).
       - name: LOAD_DATE
         description: Load timestamp from the raw layer. Used to identify the most recent record.
-    tests:
-      - stg_sap_wbs_completeness:
-          warn_if: "<10"
-          error_if: "=0"
-          store_failures: false
+

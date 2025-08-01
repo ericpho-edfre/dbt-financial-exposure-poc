@@ -96,3 +96,64 @@ models:
       - name: record_source
         description: >
           Identifier of the source system or process. For this model, expected to be 'SAP PRPS'.
+  
+  - name: link_wbs_project
+    description: >
+      Data Vault link table connecting SAP WBS, SAP Project, and Project Tracker entities. 
+      Uses incremental append-only strategy to track relationship changes over time with full audit trail. 
+      Generates surrogate keys for each source system, handles NULLs as 'UNKNOWN', and captures both 
+      link creation (is_active=TRUE) and expiration (is_active=FALSE) events. Only inserts records 
+      when link state changes, maintaining Data Vault 2.0 compliance with complete historical lineage.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - link_hk
+            - is_active
+            - load_date
+          config:
+            severity: error
+
+    columns:
+      - name: link_hk
+        description: "Surrogate key for the link relationship between all three entities"
+        tests:
+          - not_null      
+      - name: sap_wbs_hub_hk
+        description: "Hub key for SAP WBS entity (based on client_id, wbs_id, proj_id)"
+        tests:
+          - not_null
+          - relationships:
+              field: hub_hk              
+              to: ref('hub_sap_wbs')
+      - name: sap_project_hub_hk
+        description: "Hub key for SAP Project entity"
+        tests:
+          - not_null
+          - relationships:
+              field: hub_hk
+              to: ref('hub_sap_project')
+      - name: project_tracker_hub_hk
+        description: "Hub key for Project Tracker entity"
+        tests:
+          - not_null
+          - relationships:
+              field: hub_hk
+              to: ref('hub_project_tracker_project')
+              config:
+                store_failures: true
+      - name: load_date
+        description: "Timestamp when the link record was created/changed"
+        tests:
+          - not_null      
+      - name: record_source
+        description: "Source system identifier (SAP_PRPS_RAW)"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['SAP_PRPS_RAW']      
+      - name: is_active
+        description: "Boolean flag: TRUE for active links, FALSE for expired/removed links"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
