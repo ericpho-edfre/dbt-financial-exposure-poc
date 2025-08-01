@@ -4,6 +4,7 @@ sources:
   - name: raw
     description: Contains all unprocessed RAW source data as Snowflake landing zone
     schema: INFORMATICA_RAW # schema: This must match the actual Snowflake schema
+    database: DEV_EDFR_NA_STG
     config:
       freshness:
         warn_after:
