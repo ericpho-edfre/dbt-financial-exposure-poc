@@ -49,7 +49,7 @@ models:
         description: >
           SAP client identifier; part of the composite business key uniquely identifying the project.
 
-      - name: project_definition_internal
+      - name: sap_project_id
         description: >
           Internal project definition ID in SAP; uniquely identifies a project within the SAP system.
           Used in conjunction with `sap_client_id` as business keys.
@@ -132,7 +132,7 @@ models:
           - relationships:
               field: hub_hk
               to: ref('hub_sap_project')
-      - name: project_tracker_hub_hk
+      - name: project_tracker_project_hub_hk
         description: "Hub key for Project Tracker entity"
         tests:
           - not_null

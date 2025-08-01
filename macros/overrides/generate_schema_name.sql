@@ -5,6 +5,7 @@
 
     {% if schema_override.startswith('dbt_cloud_pr_') %}
         {{ log("✅ Using PR schema from target.schema: " ~ schema_override, info=True) }}
+        {{ log("🔍 Target database: " ~ target.database, info=True) }}
         {{ schema_override }}
 
     {% elif env == 'dev' %}

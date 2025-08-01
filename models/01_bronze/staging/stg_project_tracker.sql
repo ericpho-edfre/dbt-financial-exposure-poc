@@ -43,19 +43,19 @@ clean_data as (
     FROM raw_data
 )
 
-SELECT PROJECT_ID,
-    PROJECT_NAME,
-    LATITUDE,
-    LONGITUDE,
-    IS_PROJECT_EDF_OWNED,
-    DEVELOPMENT_REGION,
-    CURRENT_PROJECT_STATUS,
-    TECHNOLOGY_CATEGORY,
-    CONTRACTEDCAPACITYMWDC as CONTRACTED_CAPACITY_MW_DC,
-    CONTRACTEDCAPACITYMWAC as CONTRACTED_CAPACITY_MW_AC,
-    POICAPACITYMWAC as POI_CAPACITY_MW_AC,
-    COD_DATE,
-    EARLIEST_COD_DATE,
-    LOAD_DATE
+SELECT PROJECT_ID as project_id,
+    PROJECT_NAME as project_name,
+    LATITUDE as latitude,
+    LONGITUDE as longitude,
+    IS_PROJECT_EDF_OWNED as is_project_edf_owned,
+    DEVELOPMENT_REGION as development_region,
+    CURRENT_PROJECT_STATUS as current_project_status,
+    TECHNOLOGY_CATEGORY as technology_category,
+    CONTRACTEDCAPACITYMWDC as contracted_capacity_mw_dc,
+    CONTRACTEDCAPACITYMWAC as contracted_capacity_mw_ac,
+    POICAPACITYMWAC as poi_capacity_mw_ac,
+    COD_DATE as cod_date,
+    EARLIEST_COD_DATE as earliest_cod_date,
+    LOAD_DATE as load_date
     from clean_data
     where row_num = 1

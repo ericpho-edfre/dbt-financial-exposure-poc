@@ -27,6 +27,7 @@ ranked as (
         PSPHI as sap_proj_id,
         POSKI as wbs_element_short_identification,
         USR03 as project_tracker_project_id,
+        STUFE as project_hierarchy_level,
         LOAD_DATE,
         ROW_NUMBER() OVER (PARTITION BY MANDT, PSPNR ORDER BY LOAD_DATE DESC NULLS LAST) AS row_num
     FROM raw_data
@@ -40,6 +41,7 @@ SELECT
     sap_proj_id,
     wbs_element_short_identification,
     project_tracker_project_id,
+    project_hierarchy_level,
     LOAD_DATE
 FROM ranked
 where row_num = 1

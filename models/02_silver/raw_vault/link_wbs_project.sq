@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    database=get_database(),    
+    database=get_database(),
     incremental_strategy = 'append'
 ) }}
 
@@ -31,7 +31,7 @@ hub_keys as (
     select 
         {{ dbt_utils.generate_surrogate_key(['t1_sap_client_id','t1_wbs_id','t1_sap_proj_id']) }} as sap_wbs_hub_hk,
         {{ dbt_utils.generate_surrogate_key(['t2_sap_client_id','t2_sap_project_id']) }} as sap_project_hub_hk,
-        {{ dbt_utils.generate_surrogate_key(['t3_project_id']) }} as project_tracker_hub_hk,
+        {{ dbt_utils.generate_surrogate_key(['t3_project_id']) }} as project_tracker_project_hub_hk,
     from stg_data
 ),
 
@@ -60,11 +60,11 @@ current_links as (
         {{ dbt_utils.generate_surrogate_key([
             'sap_wbs_hub_hk',
             'sap_project_hub_hk',
-            'project_tracker_hub_hk'
+            'project_tracker_project_hub_hk'
         ]) }} as link_hk,
         sap_wbs_hub_hk,
         sap_project_hub_hk,
-        project_tracker_hub_hk,        
+        project_tracker_project_hub_hk,        
         current_timestamp as load_date,
         'SAP_PRPS_RAW' as record_source,
         TRUE as is_active
@@ -77,7 +77,7 @@ current_links as (
         where lef.link_hk = {{ dbt_utils.generate_surrogate_key([
             'sap_wbs_hub_hk',
             'sap_project_hub_hk',
-            'project_tracker_hub_hk'
+            'project_tracker_project_hub_hk'
         ]) }}
         and lef.is_active = TRUE  -- Link was already active, so this would be redundant
     )
@@ -91,7 +91,7 @@ expired_links as (
         lef.link_hk,
         l.sap_wbs_hub_hk,
         l.sap_project_hub_hk,
-        l.project_tracker_hub_hk,
+        l.project_tracker_project_hub_hk,
         current_timestamp as load_date,
         'SAP_PRPS_RAW' as record_source,
         false as is_active
@@ -109,12 +109,12 @@ expired_links as (
           where {{ dbt_utils.generate_surrogate_key([
               'hk.sap_wbs_hub_hk',
               'hk.sap_project_hub_hk', 
-              'hk.project_tracker_hub_hk'
+              'hk.project_tracker_project_hub_hk'
           ]) }} = lef.link_hk
       )
     {% else %}
     select null as link_hk, null as sap_wbs_hub_hk, null as sap_project_hub_hk,
-           null as project_tracker_hub_hk, null as load_date, null as record_source, null as is_active
+           null as project_tracker_project_hub_hk, null as load_date, null as record_source, null as is_active
     where false
     {% endif %}
 )
