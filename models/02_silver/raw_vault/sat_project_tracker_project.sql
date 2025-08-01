@@ -1,6 +1,6 @@
 {{ config(
     materialized = 'incremental',
-    unique_key = ['hub_hk', 'load_date']
+    unique_key = ['project_tracker_project_hk', 'load_date']
 ) }}
 
 {{ generate_satellite_incremental(
@@ -20,8 +20,8 @@
         'cod_date',
         'earliest_cod_date'
     ],
-    record_source='"seed"',
+    record_source='"project_tracker_raw"',
     load_date_expr='current_timestamp',
-    key_alias='hub_hk',
+    key_alias='project_tracker_project_hk',
     hashdiff_alias='hashdiff'
 ) }}

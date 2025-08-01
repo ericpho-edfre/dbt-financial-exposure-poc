@@ -1,5 +1,10 @@
 {% macro generate_hub(source_relation, business_keys, source_name, add_unknown_record=True) %}
 
+{# Infer the hashkey alias from the model name, dropping 'hub_' prefix #}
+{% set model_name = this.identifier | lower %}
+{% set concept_name = model_name.replace('hub_', '') %}
+{% set hashkey_alias = concept_name ~ '_hk' %}
+
 {%- set unknown_list = [] -%}
 {%- for col in business_keys -%}
     {%- set _ = unknown_list.append("'UNKNOWN'") -%}
@@ -8,7 +13,7 @@
 with source as (
 
     select
-        {{ dbt_utils.generate_surrogate_key(business_keys) }} as hub_hk,
+        {{ dbt_utils.generate_surrogate_key(business_keys) }} as {{ hashkey_alias }},
         {% for col in business_keys %}
         cast({{ col }} as varchar) as {{ col }},
         {% endfor %}
@@ -25,7 +30,7 @@ with source as (
 deduplicated as (
 
     select distinct 
-        hub_hk,
+        {{ hashkey_alias }},
         {% for col in business_keys %}
         {{ col }},
         {% endfor %}
@@ -34,7 +39,7 @@ deduplicated as (
     from source
 
     {% if is_incremental() %}
-    where hub_hk not in (select hub_hk from {{ this }})
+    where {{ hashkey_alias }} not in (select {{ hashkey_alias }} from {{ this }})
     {% endif %}
 
 )
@@ -43,7 +48,7 @@ deduplicated as (
 ,
 unknown_record as (
     select 
-        {{ dbt_utils.generate_surrogate_key(unknown_list) }} as hub_hk,
+        {{ dbt_utils.generate_surrogate_key(unknown_list) }} as {{ hashkey_alias }},
         {% for col in business_keys %}
         'UNKNOWN' as {{ col }},
         {% endfor %}
@@ -59,7 +64,7 @@ union all
 select * from unknown_record
 {% if is_incremental() %}
 where {{ dbt_utils.generate_surrogate_key(unknown_list) }} not in (
-    select hub_hk from {{ this }}
+    select {{ hashkey_alias }} from {{ this }}
 )
 {% endif %}
 {% endif %}

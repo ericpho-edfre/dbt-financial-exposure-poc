@@ -1,6 +1,0 @@
-{{ config(
-    materialized = 'view',
-    database=get_database(),
-) }}
-
-{{ generate_link_decipher_view('link_wbs_project') }}

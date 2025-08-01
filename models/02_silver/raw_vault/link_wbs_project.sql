@@ -29,9 +29,9 @@ with stg_data as
 
 hub_keys as (
     select 
-        {{ dbt_utils.generate_surrogate_key(['t1_sap_client_id','t1_wbs_id','t1_sap_proj_id']) }} as sap_wbs_hub_hk,
-        {{ dbt_utils.generate_surrogate_key(['t2_sap_client_id','t2_sap_project_id']) }} as sap_project_hub_hk,
-        {{ dbt_utils.generate_surrogate_key(['t3_project_id']) }} as project_tracker_project_hub_hk,
+        {{ dbt_utils.generate_surrogate_key(['t1_sap_client_id','t1_wbs_id','t1_sap_proj_id']) }} as sap_wbs_hk,
+        {{ dbt_utils.generate_surrogate_key(['t2_sap_client_id','t2_sap_project_id']) }} as sap_project_hk,
+        {{ dbt_utils.generate_surrogate_key(['t3_project_id']) }} as project_tracker_project_hk,
     from stg_data
 ),
 
@@ -58,13 +58,13 @@ latest_existing_filtered as (
 current_links as (
     select 
         {{ dbt_utils.generate_surrogate_key([
-            'sap_wbs_hub_hk',
-            'sap_project_hub_hk',
-            'project_tracker_project_hub_hk'
+            'sap_wbs_hk',
+            'sap_project_hk',
+            'project_tracker_project_hk'
         ]) }} as link_hk,
-        sap_wbs_hub_hk,
-        sap_project_hub_hk,
-        project_tracker_project_hub_hk,        
+        sap_wbs_hk,
+        sap_project_hk,
+        project_tracker_project_hk,        
         current_timestamp as load_date,
         'SAP_PRPS_RAW' as record_source,
         TRUE as is_active
@@ -75,9 +75,9 @@ current_links as (
         select 1 
         from latest_existing_filtered lef
         where lef.link_hk = {{ dbt_utils.generate_surrogate_key([
-            'sap_wbs_hub_hk',
-            'sap_project_hub_hk',
-            'project_tracker_project_hub_hk'
+            'sap_wbs_hk',
+            'sap_project_hk',
+            'project_tracker_project_hk'
         ]) }}
         and lef.is_active = TRUE  -- Link was already active, so this would be redundant
     )
@@ -89,9 +89,9 @@ expired_links as (
     {% if is_incremental() %}
     select 
         lef.link_hk,
-        l.sap_wbs_hub_hk,
-        l.sap_project_hub_hk,
-        l.project_tracker_project_hub_hk,
+        l.sap_wbs_hk,
+        l.sap_project_hk,
+        l.project_tracker_project_hk,
         current_timestamp as load_date,
         'SAP_PRPS_RAW' as record_source,
         false as is_active
@@ -107,14 +107,14 @@ expired_links as (
           select 1
           from hub_keys hk
           where {{ dbt_utils.generate_surrogate_key([
-              'hk.sap_wbs_hub_hk',
-              'hk.sap_project_hub_hk', 
-              'hk.project_tracker_project_hub_hk'
+              'hk.sap_wbs_hk',
+              'hk.sap_project_hk', 
+              'hk.project_tracker_project_hk'
           ]) }} = lef.link_hk
       )
     {% else %}
-    select null as link_hk, null as sap_wbs_hub_hk, null as sap_project_hub_hk,
-           null as project_tracker_project_hub_hk, null as load_date, null as record_source, null as is_active
+    select null as link_hk, null as sap_wbs_hk, null as sap_project_hk,
+           null as project_tracker_project_hk, null as load_date, null as record_source, null as is_active
     where false
     {% endif %}
 )
