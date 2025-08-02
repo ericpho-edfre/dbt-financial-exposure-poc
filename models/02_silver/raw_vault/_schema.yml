@@ -157,3 +157,139 @@ models:
           - not_null
           - accepted_values:
               values: [true, false]
+
+  - name: sat_project_tracker_project_01
+    description: >
+      Satellite capturing descriptive attributes of projects from the Project Tracker system.
+      Tracks historical changes using hashdiff and load date.
+    columns:
+      - name: project_tracker_project_hk
+        description: Hash key referencing the Project Tracker project hub.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_project_tracker_project')
+              field: project_tracker_project_hk
+
+      - name: hashdiff
+        description: >
+          Hashdiff of all descriptive attributes used to detect changes between records.
+
+      - name: load_date
+        description: >
+          Timestamp indicating when the record was ingested into the satellite.
+
+      - name: record_source
+        description: >
+          Name of the source system or table from which the data originated.
+          In this case: "project_tracker_raw".
+
+      - name: project_name
+        description: Same as in `stg_project_tracker`.
+
+      - name: latitude
+        description: Same as in `stg_project_tracker`.
+
+      - name: longitude
+        description: Same as in `stg_project_tracker`.
+
+      - name: is_project_edf_owned
+        description: Same as in `stg_project_tracker`.
+
+      - name: development_region
+        description: Same as in `stg_project_tracker`.
+
+      - name: current_project_status
+        description: Same as in `stg_project_tracker`.
+
+      - name: technology_category
+        description: Same as in `stg_project_tracker`.
+
+      - name: contracted_capacity_mw_dc
+        description: Same as in `stg_project_tracker`.
+
+      - name: contracted_capacity_mw_ac
+        description: Same as in `stg_project_tracker`.
+
+      - name: poi_capacity_mw_ac
+        description: Same as in `stg_project_tracker`.
+
+      - name: cod_date
+        description: Same as in `stg_project_tracker`.
+
+      - name: earliest_cod_date
+        description: Same as in `stg_project_tracker`.
+   
+  - name: sat_sap_project_01
+    description: >
+      Satellite capturing descriptive attributes of SAP projects.
+      Tracks changes over time using a hashdiff and a load date.
+    columns:
+      - name: sap_project_hk
+        description: Hash key referencing the SAP Project hub.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_sap_project')
+              field: sap_project_hk
+
+      - name: hashdiff
+        description: >
+          Hashdiff computed from the descriptive attributes. Used to detect changes in project data.
+
+      - name: load_date
+        description: >
+          Timestamp indicating when the record was loaded into the satellite.
+
+      - name: record_source
+        description: >
+          Source system from which the data originated. Here: "SAP PROJ".
+
+      - name: project_definition
+        description: Same as in `stg_sap_project`.
+
+      - name: project_short_definition_line1
+        description: Same as in `stg_sap_project`.
+
+  - name: sat_sap_wbs_01
+    description: >
+      Satellite storing descriptive attributes of SAP WBS (Work Breakdown Structure) elements.
+      Changes are tracked using a hashdiff and timestamped with a load date.
+    columns:
+      - name: sap_wbs_hk
+        description: Hash key referencing the SAP WBS hub.
+        tests:
+          - not_null
+          - relationships:
+              to: ref('hub_sap_wbs')
+              field: sap_wbs_hk
+
+      - name: hashdiff
+        description: >
+          Hashdiff of the descriptive attributes to track changes over time.
+
+      - name: load_date
+        description: >
+          Timestamp indicating when the record was loaded into the satellite.
+
+      - name: record_source
+        description: >
+          Source system from which the data was extracted. Here: "SAP PRPS".
+
+      - name: wbs_other_id
+        description: Same as in `stg_sap_wbs`.
+
+      - name: wbs_short_definition_line1
+        description: Same as in `stg_sap_wbs`.
+
+      - name: sap_proj_id
+        description: Same as in `stg_sap_wbs`.
+
+      - name: wbs_element_short_identification
+        description: Same as in `stg_sap_wbs`.
+
+      - name: project_tracker_project_id
+        description: Same as in `stg_sap_wbs`.
+
+      - name: project_hierarchy_level
+        description: Same as in `stg_sap_wbs`.
