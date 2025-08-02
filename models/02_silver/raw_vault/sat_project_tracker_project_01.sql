@@ -5,7 +5,7 @@
 
 {{ generate_satellite_incremental(
     source_model='stg_project_tracker',
-    business_key='project_id',
+    business_keys=['project_id'],
     attributes=[
         'project_name',
         'latitude',

@@ -1,19 +1,20 @@
 {% macro generate_satellite_incremental(
     source_model,
-    business_key,
+    business_keys,
     attributes,
     record_source='"manual"',
     load_date_expr='current_timestamp',
     key_alias='business_hk',
     hashdiff_alias='hashdiff'
 ) %}
-{# Create hashdiff from descriptive attributes #}
+{# Generate surrogate keys #}
+{% set key_expr = dbt_utils.generate_surrogate_key(business_keys) %}
 {% set hash_expr = dbt_utils.generate_surrogate_key(attributes) %}
 
 -- CTE: Source records with generated keys and hashdiff
 with source as (
     select
-        {{ dbt_utils.generate_surrogate_key([business_key]) }} as {{ key_alias }},
+        {{ key_expr }} as {{ key_alias }},
         {% for attr in attributes %}
         {{ attr }},
         {% endfor %}
@@ -21,7 +22,9 @@ with source as (
         {{ load_date_expr }} as load_date,
         '{{ record_source }}' as record_source
     from {{ ref(source_model) }}
-    where {{ business_key }} is not null
+    where {% for bk in business_keys %}
+        {{ bk }} is not null{% if not loop.last %} and {% endif %}
+    {% endfor %}
 ),
 
 {% if is_incremental() %}
@@ -74,7 +77,7 @@ deduplicated as (
 
 {% endif %}
 
--- Final output (no ambiguous select *)
+-- Final output
 select
     {{ key_alias }},
     {% for attr in attributes %}
@@ -84,4 +87,5 @@ select
     load_date,
     record_source
 from deduplicated
+
 {% endmacro %}
