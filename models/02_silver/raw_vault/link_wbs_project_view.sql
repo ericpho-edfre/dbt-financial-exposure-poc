@@ -1,6 +1,5 @@
 {{ config(
-    materialized = 'view',
-    database=get_database(),
+    materialized = 'view'    
 ) }}
 
 {{ generate_link_decipher_view(

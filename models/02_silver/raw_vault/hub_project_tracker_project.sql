@@ -1,6 +1,5 @@
 {{ config(
-    materialized = 'incremental',
-    database=get_database(),
+    materialized = 'incremental',    
     unique_key = 'project_tracker_project_hk'
 ) }}
 
