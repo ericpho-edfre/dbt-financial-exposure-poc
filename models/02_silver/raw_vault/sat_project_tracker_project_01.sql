@@ -4,6 +4,7 @@
 ) }}
 
 {{ generate_satellite_incremental(
+    hub_model_name='hub_project_tracker_project',
     source_model='stg_project_tracker',
     business_keys=['project_id'],
     attributes=[

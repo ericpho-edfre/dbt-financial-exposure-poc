@@ -4,6 +4,7 @@
 ) }}
 
 {{ generate_satellite_incremental(
+    hub_model_name='hub_sap_project',
     source_model='stg_sap_project',
     business_keys=['sap_client_id','sap_project_id'],
     attributes=[

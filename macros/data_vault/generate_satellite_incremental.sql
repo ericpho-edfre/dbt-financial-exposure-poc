@@ -1,4 +1,5 @@
 {% macro generate_satellite_incremental(
+    hub_model_name,
     source_model,
     business_keys,
     attributes,
@@ -7,11 +8,17 @@
     key_alias='business_hk',
     hashdiff_alias='hashdiff'
 ) %}
-{# Generate surrogate keys #}
 {% set key_expr = dbt_utils.generate_surrogate_key(business_keys) %}
 {% set hash_expr = dbt_utils.generate_surrogate_key(attributes) %}
 
--- CTE: Source records with generated keys and hashdiff
+{% if hub_model_name is none %}
+    {{ exceptions.raise_compiler_error("❌ Missing required hub_model_name for referential integrity.") }}
+{% endif %}
+
+{% set hub_ref = ref(hub_model_name) %}
+
+
+-- CTE: Source with keys
 with source as (
     select
         {{ key_expr }} as {{ key_alias }},
@@ -27,9 +34,17 @@ with source as (
     {% endfor %}
 ),
 
+-- CTE: Validate against hub
+valid_source as (
+    select s.*
+    from source s
+    inner join {{ hub_ref }} h
+      on s.{{ key_alias }} = h.{{ key_alias }}
+),
+
 {% if is_incremental() %}
 
--- CTE: Latest existing records per business key
+-- Latest existing
 latest_existing as (
     select
         {{ key_alias }} as existing_{{ key_alias }},
@@ -44,25 +59,23 @@ latest_existing as (
     where rn = 1
 ),
 
--- CTE: Filter only new or changed records
 deduplicated as (
     select
-        s.{{ key_alias }},
+        v.{{ key_alias }},
         {% for attr in attributes %}
-        s.{{ attr }},
+        v.{{ attr }},
         {% endfor %}
-        s.{{ hashdiff_alias }},
-        s.load_date,
-        s.record_source
-    from source s
+        v.{{ hashdiff_alias }},
+        v.load_date,
+        v.record_source
+    from valid_source v
     left join latest_existing le
-      on s.{{ key_alias }} = le.existing_{{ key_alias }}
-    where le.{{ hashdiff_alias }} is null or le.{{ hashdiff_alias }} != s.{{ hashdiff_alias }}
+      on v.{{ key_alias }} = le.existing_{{ key_alias }}
+    where le.{{ hashdiff_alias }} is null or le.{{ hashdiff_alias }} != v.{{ hashdiff_alias }}
 )
 
 {% else %}
 
--- Full load case
 deduplicated as (
     select
         {{ key_alias }},
@@ -72,12 +85,11 @@ deduplicated as (
         {{ hashdiff_alias }},
         load_date,
         record_source
-    from source
+    from valid_source
 )
 
 {% endif %}
 
--- Final output
 select
     {{ key_alias }},
     {% for attr in attributes %}
