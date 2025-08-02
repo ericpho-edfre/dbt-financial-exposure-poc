@@ -3,8 +3,7 @@
     database=get_database(),
 ) }}
 
--- depends_on: {{ ref('hub_sap_wbs') }}
--- depends_on: {{ ref('hub_sap_project') }}
--- depends_on: {{ ref('hub_project_tracker_project') }}
-
-{{ generate_link_decipher_view('link_wbs_project') }}
+{{ generate_link_decipher_view(
+    model_name = 'link_wbs_project',
+    link_hashkeys = ['sap_wbs_hk', 'sap_project_hk', 'project_tracker_project_hk']
+) }}
