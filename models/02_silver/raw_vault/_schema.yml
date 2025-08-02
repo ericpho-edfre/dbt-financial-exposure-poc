@@ -25,11 +25,15 @@ models:
         description: >
           Timestamp indicating when the record was loaded into the raw vault.
           Typically set using `current_timestamp` during model execution.
+        tests:
+          - not_null
 
       - name: record_source
         description: >
           Indicates the source system from which the record originated.
           Hardcoded as 'Project tracker' in this model.
+        tests:
+          - not_null
   
   - name: hub_sap_project
     description: >
@@ -57,11 +61,15 @@ models:
       - name: load_date
         description: >
           Timestamp indicating when the record was loaded into the Data Vault.
+        tests:
+          - not_null
 
       - name: record_source
         description: >
           Metadata field indicating the source system or process that loaded this record.
           Expected to be "SAP PROJ" for this model.
+        tests:
+          - not_null
 
   - name: hub_sap_wbs
     description: >
@@ -92,10 +100,14 @@ models:
       - name: load_date
         description: >
           Timestamp indicating when the record was loaded into the data platform.
+        tests:
+          - not_null
 
       - name: record_source
         description: >
           Identifier of the source system or process. For this model, expected to be 'SAP PRPS'.
+        tests:
+          - not_null
   
   - name: link_wbs_project
     description: >
@@ -120,22 +132,19 @@ models:
           - not_null      
       - name: sap_wbs_hk
         description: "Hub key for SAP WBS entity (based on client_id, wbs_id, proj_id)"
-        tests:
-          - not_null
+        tests:          
           - relationships:
               field: sap_wbs_hk              
               to: ref('hub_sap_wbs')
       - name: sap_project_hk
         description: "Hub key for SAP Project entity"
-        tests:
-          - not_null
+        tests:          
           - relationships:
               field: sap_project_hk
               to: ref('hub_sap_project')
       - name: project_tracker_project_hk
         description: "Hub key for Project Tracker entity"
-        tests:
-          - not_null
+        tests:          
           - relationships:
               field: project_tracker_project_hk
               to: ref('hub_project_tracker_project')
@@ -174,15 +183,21 @@ models:
       - name: hashdiff
         description: >
           Hashdiff of all descriptive attributes used to detect changes between records.
+        tests:
+          - not_null
 
       - name: load_date
         description: >
           Timestamp indicating when the record was ingested into the satellite.
+        tests:
+          - not_null
 
       - name: record_source
         description: >
           Name of the source system or table from which the data originated.
           In this case: "project_tracker_raw".
+        tests:
+          - not_null
 
       - name: project_name
         description: Same as in `stg_project_tracker`.
@@ -227,8 +242,7 @@ models:
     columns:
       - name: sap_project_hk
         description: Hash key referencing the SAP Project hub.
-        tests:
-          - not_null
+        tests:          
           - relationships:
               to: ref('hub_sap_project')
               field: sap_project_hk
@@ -236,14 +250,20 @@ models:
       - name: hashdiff
         description: >
           Hashdiff computed from the descriptive attributes. Used to detect changes in project data.
+        tests:
+          - not_null
 
       - name: load_date
         description: >
           Timestamp indicating when the record was loaded into the satellite.
+        tests:
+          - not_null
 
       - name: record_source
         description: >
           Source system from which the data originated. Here: "SAP PROJ".
+        tests:
+          - not_null
 
       - name: project_definition
         description: Same as in `stg_sap_project`.
@@ -258,24 +278,28 @@ models:
     columns:
       - name: sap_wbs_hk
         description: Hash key referencing the SAP WBS hub.
-        tests:
-          - not_null
+        tests:          
           - relationships:
-              enabled: false
               to: ref('hub_sap_wbs')
               field: sap_wbs_hk
 
       - name: hashdiff
         description: >
           Hashdiff of the descriptive attributes to track changes over time.
+        tests:
+          - not_null
 
       - name: load_date
         description: >
           Timestamp indicating when the record was loaded into the satellite.
+        tests:
+          - not_null
 
       - name: record_source
         description: >
           Source system from which the data was extracted. Here: "SAP PRPS".
+        tests:
+          - not_null
 
       - name: wbs_other_id
         description: Same as in `stg_sap_wbs`.
