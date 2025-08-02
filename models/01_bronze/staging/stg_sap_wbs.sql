@@ -1,7 +1,6 @@
 -- models/01_bronze/stg_sap_wbs.sql
 {{ config(
-    materialized='view',
-    database=get_database() 
+    materialized='view'    
 ) }}
 
 -- Bronze layer for SAP WBS data

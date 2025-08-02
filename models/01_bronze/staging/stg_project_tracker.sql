@@ -1,7 +1,6 @@
 -- models/01_bronze/stg_project_tracker.sql
 {{ config(
-    materialized='view',
-    database=get_database() 
+    materialized='view'    
 ) }}
 
 

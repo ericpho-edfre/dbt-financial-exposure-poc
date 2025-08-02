@@ -1,7 +1,6 @@
 
 {{ config(
     store_failures=true,
-    database=get_database(),
     severity='warn'
 ) }}
 
