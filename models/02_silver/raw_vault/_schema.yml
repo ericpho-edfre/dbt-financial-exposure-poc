@@ -4,10 +4,10 @@ models:
   - name: hub_project_tracker_project
     description: >
       Hub table for projects coming from Project Tracker, built following Data Vault 2.0 raw vault standards.
-      It captures the unique business key `project_id` and its associated hash key `hub_hk`, 
+      It captures the unique business key `project_id` and its associated hash key `project_tracker_project_hk`, 
       along with metadata such as load timestamp and record source.
     columns:
-      - name: hub_hk
+      - name: project_tracker_project_hk
         description: >
           Surrogate hash key generated from the business key(s) using `generate_surrogate_key(['project_id'])`.
           Serves as the primary unique identifier for the hub.
@@ -37,7 +37,7 @@ models:
       Following Data Vault 2.0 raw vault standards, this model captures the unique business identifiers from 
       the SAP system to form the core project concept.
     columns:
-      - name: hub_hk
+      - name: sap_project_hk
         description: >
           Surrogate hash key serving as the unique identifier for the hub. Typically derived
           from the business key(s).
@@ -70,7 +70,7 @@ models:
       and built following Data Vault 2.0 raw vault standards.This hub represents the core business 
       concept of WBS within the SAP project system.
     columns:
-      - name: hub_hk
+      - name: sap_wbs_hk
         description: >
           Surrogate hash key uniquely identifying a WBS hub record. Generated from the business keys.
         tests:
@@ -118,26 +118,26 @@ models:
         description: "Surrogate key for the link relationship between all three entities"
         tests:
           - not_null      
-      - name: sap_wbs_hub_hk
+      - name: sap_wbs_hk
         description: "Hub key for SAP WBS entity (based on client_id, wbs_id, proj_id)"
         tests:
           - not_null
           - relationships:
-              field: hub_hk              
+              field: sap_wbs_hk              
               to: ref('hub_sap_wbs')
-      - name: sap_project_hub_hk
+      - name: sap_project_hk
         description: "Hub key for SAP Project entity"
         tests:
           - not_null
           - relationships:
-              field: hub_hk
+              field: sap_project_hk
               to: ref('hub_sap_project')
-      - name: project_tracker_project_hub_hk
+      - name: project_tracker_project_hk
         description: "Hub key for Project Tracker entity"
         tests:
           - not_null
           - relationships:
-              field: hub_hk
+              field: project_tracker_project_hk
               to: ref('hub_project_tracker_project')
               config:
                 store_failures: true

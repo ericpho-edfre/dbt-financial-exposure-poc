@@ -1,7 +1,7 @@
 {{ config(
     materialized = 'incremental',
     database=get_database(),
-    unique_key = 'hub_hk'
+    unique_key = 'sap_wbs_hk'
 ) }}
 
 {{ generate_hub(
