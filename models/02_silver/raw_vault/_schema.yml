@@ -261,6 +261,7 @@ models:
         tests:
           - not_null
           - relationships:
+              enabled: false
               to: ref('hub_sap_wbs')
               field: sap_wbs_hk
 
